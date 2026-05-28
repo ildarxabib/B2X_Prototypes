@@ -172,7 +172,7 @@ a {
 
 .hero {
   width: min(1240px, calc(100% - 40px));
-  min-height: 500px;
+  min-height: clamp(360px, 50vh, 420px);
   margin: 32px auto 0;
   overflow: hidden;
   border: 1.5px solid var(--border);
@@ -183,8 +183,8 @@ a {
 .hero-inner {
   display: flex;
   align-items: center;
-  min-height: 500px;
-  padding: 58px;
+  min-height: clamp(360px, 50vh, 420px);
+  padding: 42px 58px;
 }
 
 .hero-content {
@@ -233,6 +233,33 @@ a {
   color: var(--muted);
   font-size: 18px;
   line-height: 1.55;
+}
+
+.hero-benefits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 760px;
+  margin: 0 0 30px;
+}
+
+.hero-benefit {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1.5px solid rgba(47, 181, 255, 0.2);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--blue);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.hero-benefit::before {
+  content: "✦";
+  margin-right: 6px;
+  color: var(--blue);
 }
 
 .hero-actions,
@@ -390,8 +417,49 @@ a {
   color: var(--muted);
 }
 
-.scenario-grid {
+.scenario-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.scenario-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: #f0f2f5;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 800;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.scenario-tab:hover,
+.scenario-tab.active {
+  background: var(--blue);
+  color: #fff;
+}
+
+.scenario-panel {
+  min-height: 244px;
+}
+
+.scenario-panel .scenario-card {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.scenario-panel .scenario-meta {
+  grid-column: 1 / -1;
+}
+
+.scenario-panel .scenario-quote {
+  grid-column: 1;
+  max-width: 560px;
 }
 
 .scenario-card {
@@ -579,15 +647,71 @@ a {
   font-weight: 800;
 }
 
+.token-block .info-dot {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  background: var(--blue);
+  color: #fff;
+  border: 0;
+  box-shadow: none;
+  font-size: 12px;
+}
+
+.token-block:hover .info-dot,
+.token-block:focus-within .info-dot {
+  background: var(--blue-hover);
+}
+
 .token-block .tooltip {
-  left: 16px;
-  transform: translate(0, 6px);
-  white-space: pre-line;
+  left: auto;
+  right: 0;
+  width: min(300px, 76vw);
+  padding: 16px;
+  border: 1.5px solid rgba(47, 181, 255, 0.18);
+  border-radius: 18px;
+  background: #fff;
+  transform: translate(0, 8px);
+  white-space: normal;
 }
 
 .token-block:hover .tooltip,
 .token-block:focus-within .tooltip {
   transform: translate(0, 0);
+}
+
+.token-tooltip {
+  display: grid;
+  gap: 12px;
+}
+
+.token-tooltip-title {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.token-tooltip-list {
+  display: grid;
+  gap: 8px;
+}
+
+.token-tooltip-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.token-tooltip-item::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--blue);
 }
 
 .price {
@@ -654,10 +778,20 @@ a {
   background: rgba(255, 255, 255, 0.18);
 }
 
-.custom-card .btn-white {
-  background: #fff;
-  color: var(--blue);
-  border-color: #fff;
+.custom-card .btn-ai {
+  background: var(--blue);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.46);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+.custom-card .btn-ai:hover {
+  background: var(--blue-hover);
+}
+
+.custom-card .btn-ai span {
+  font-size: 15px;
+  line-height: 1;
 }
 
 .benefit-card {
@@ -776,6 +910,10 @@ a {
 .modal-card.ai-modal {
   width: min(650px, 100%);
   overflow: visible;
+}
+
+.modal-card.ai-result-modal {
+  width: min(560px, 100%);
 }
 
 .modal-card.ai-modal .modal-close {
@@ -960,6 +1098,10 @@ a {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 22px;
+}
+
+.ai-result-modal .modal-actions {
+  justify-content: center;
 }
 
 .otp-code {
@@ -1170,11 +1312,36 @@ a {
 
 .recommend-card {
   display: grid;
-  gap: 14px;
+  gap: 18px;
   margin-top: 20px;
-  padding: 18px;
+  padding: 24px;
   border: 1.5px solid var(--border);
   border-radius: 16px;
+}
+
+.recommend-card h3 {
+  font-size: 24px;
+}
+
+.recommend-card .spec-list {
+  gap: 14px;
+  margin: 10px 0 18px;
+}
+
+.recommend-card .spec-row {
+  font-size: 17px;
+}
+
+.recommend-card .spec-row .icon,
+.recommend-card .spec-row > span:first-child {
+  width: 24px;
+  height: 24px;
+  color: var(--blue);
+  font-size: 22px;
+}
+
+.recommend-card .price {
+  font-size: 36px;
 }
 
 .checkout-page {
@@ -1262,6 +1429,12 @@ a {
   padding: 0;
 }
 
+.link-button:disabled {
+  color: var(--disabled);
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
 .strip-details {
   display: grid;
   gap: 6px;
@@ -1300,15 +1473,30 @@ a {
 
 .stepper {
   display: grid;
-  gap: 18px;
+  gap: 8px;
 }
 
 .stepper-item {
   display: grid;
   grid-template-columns: 30px 1fr;
   gap: 10px;
-  align-items: start;
+  align-items: center;
+  width: 100%;
+  min-height: 42px;
+  padding: 6px 8px 6px 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
   color: var(--helper);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.stepper-item:hover {
+  background: var(--soft-blue);
+  color: var(--text);
 }
 
 .stepper-dot {
@@ -1342,6 +1530,10 @@ a {
   background: #fff;
   color: var(--blue);
   border: 2px solid var(--blue);
+}
+
+.stepper-label {
+  line-height: 1.25;
 }
 
 .progress-label {
@@ -1621,6 +1813,11 @@ a {
   border-radius: 16px;
 }
 
+.identity-stack {
+  display: grid;
+  gap: 14px;
+}
+
 .data-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1832,6 +2029,10 @@ a {
   justify-content: flex-end;
 }
 
+.step-actions-start {
+  justify-content: flex-start;
+}
+
 .payment-actions {
   align-items: flex-start;
 }
@@ -1964,6 +2165,7 @@ a {
   .grid-3,
   .grid-2,
   .scenario-grid,
+  .scenario-panel .scenario-card,
   .choice-grid,
   .payment-grid {
     grid-template-columns: 1fr;

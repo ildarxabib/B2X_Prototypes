@@ -27,7 +27,7 @@ document.querySelector(".icon-pin").innerHTML = icons.pin;
 const tariffs = [
   {
     id: "start",
-    name: "Business Start",
+    name: "Бизнес Старт",
     for: "Для фаундера и solo-предпринимателя",
     minutes: 300,
     gb: 20,
@@ -37,7 +37,7 @@ const tariffs = [
   },
   {
     id: "grow",
-    name: "Business Grow",
+    name: "Бизнес Развитие",
     badge: "Популярный",
     for: "Для растущей команды",
     minutes: 400,
@@ -48,7 +48,7 @@ const tariffs = [
   },
   {
     id: "pro",
-    name: "Business Pro",
+    name: "Бизнес Про",
     for: "Для активных команд и медиа",
     minutes: 600,
     gb: 50,
@@ -68,13 +68,13 @@ const useCases = [
   {
     title: "Фаундер, запускает стартап",
     task: "Связь для бизнеса с первого дня",
-    solution: "Business Start, eSIM мгновенно, Yota ID сразу.",
+    solution: "Бизнес Старт, eSIM мгновенно, Yota ID сразу.",
     accent: "Запустился быстрее, чем успел заварить кофе"
   },
   {
     title: "Продакшн-студия, съемки по всему миру",
     task: "Связь без роуминговых сюрпризов",
-    solution: "Business Pro. Единый data-пакет в 100+ странах.",
+    solution: "Бизнес Про. Единый data-пакет в 100+ странах.",
     accent: "Работает в Дубае так же, как в Москве"
   },
   {
@@ -183,6 +183,7 @@ const state = {
   view: "landing",
   modal: null,
   selectedTariff: tariffs[1],
+  activeUseCase: 0,
   yotaBannerOpen: false,
   checkoutStep: 0,
   simType: "plastic",
@@ -212,7 +213,7 @@ const state = {
   email: "",
   emailTouched: false,
   accepted: false,
-  payment: "sbp",
+  payment: "invoice",
   paymentPanel: null,
   custom: {
     minutes: 400,
@@ -293,7 +294,12 @@ function renderLanding() {
         <div class="hero-content">
           <div class="eyebrow">✦ Mobile-платформа для бизнеса</div>
           <h1><span class="hero-title-line">Связь, которая работает</span><span class="hero-title-line">на твой бизнес</span></h1>
-          <p>Подключение за 2 минуты. eSIM или физическая SIM. AI-токены в каждом тарифе. Yota ID — ключ к городу.</p>
+          <div class="hero-benefits" aria-label="Преимущества">
+            <span class="hero-benefit">Подключение за 2 минуты</span>
+            <span class="hero-benefit">eSIM или физическая SIM</span>
+            <span class="hero-benefit">AI-токены в каждом тарифе</span>
+            <span class="hero-benefit">Yota ID — ключ к городу</span>
+          </div>
           <div class="hero-actions">
             <a class="btn btn-primary" href="#tariffs">Выбрать тариф →</a>
             <a class="btn btn-secondary" href="#features">Узнать больше</a>
@@ -322,8 +328,15 @@ function renderLanding() {
           <p class="section-copy">Несколько примеров из жизни технологичных команд</p>
         </div>
       </div>
-      <div class="grid scenario-grid">
-        ${useCases.map(renderScenario).join("")}
+      <div class="scenario-tabs" role="tablist" aria-label="Сценарии бизнеса">
+        ${useCases.map((item, index) => `
+          <button class="scenario-tab ${index === state.activeUseCase ? "active" : ""}" type="button" role="tab" aria-selected="${index === state.activeUseCase}" data-action="set-use-case" data-index="${index}">
+            ${item.title}
+          </button>
+        `).join("")}
+      </div>
+      <div class="scenario-panel">
+        ${renderScenario(useCases[state.activeUseCase] || useCases[0])}
       </div>
     </section>
 
@@ -376,6 +389,16 @@ function renderScenario(item) {
   `;
 }
 
+function renderTokenTooltip(text) {
+  const [title, ...items] = text.split("\n");
+  return `
+    <span class="token-tooltip-title">${title.replace(":", "")}</span>
+    <span class="token-tooltip-list">
+      ${items.map(item => `<span class="token-tooltip-item">${item.replace(/^•\s*/, "")}</span>`).join("")}
+    </span>
+  `;
+}
+
 function renderTariffCard(tariff) {
   return `
     <article class="card tariff-card">
@@ -391,7 +414,7 @@ function renderTariffCard(tariff) {
       <div class="token-block has-tooltip" tabindex="0">
         <span>✦ ${tariff.tokens} токенов</span>
         <span class="info-dot">i</span>
-        <span class="tooltip">${tariff.tooltip}</span>
+        <span class="tooltip token-tooltip">${renderTokenTooltip(tariff.tooltip)}</span>
       </div>
       <div class="price">${priceHtml(tariff.price)} <small>/мес за номер</small></div>
       <div class="cta-zone">
@@ -409,7 +432,7 @@ function renderCustomCard() {
       <p>Собери тариф под задачи своего бизнеса</p>
       <div class="cta-zone">
         <div class="button-row">
-          <button class="btn btn-white btn-full" type="button" data-action="open-ai">Подобрать с AI</button>
+          <button class="btn btn-ai btn-full" type="button" data-action="open-ai"><span>✦</span>Подобрать с AI</button>
           <button class="btn btn-secondary btn-full" type="button" data-action="open-custom">Настроить самому</button>
         </div>
       </div>
@@ -448,7 +471,7 @@ function renderCallPreview() {
       <div class="call-preview">
         <div class="call-screen">
           <div class="helper-text">Входящий звонок</div>
-          <div class="call-name">Yota Business <span class="check-blue">✓</span></div>
+          <div class="call-name">Yota для бизнеса <span class="check-blue">✓</span></div>
           <div class="helper-text">Подтвержденный абонент Yota</div>
         </div>
       </div>
@@ -476,7 +499,7 @@ function renderCheckout() {
               </span>
               — он уже ждет в личном кабинете.
             </div>
-            <button class="link-button" type="button" data-action="toggle-yota-banner">Перейти в личный кабинет</button>
+            <button class="link-button" type="button" disabled aria-disabled="true">Перейти в личный кабинет</button>
           </div>
           ${state.yotaBannerOpen ? `
             <div class="strip-details">
@@ -509,10 +532,10 @@ function renderStepperItem(label, index) {
   const status = index < state.checkoutStep ? "completed" : index === state.checkoutStep ? "active" : "upcoming";
   const mark = index < state.checkoutStep ? "✓" : index + 1;
   return `
-    <div class="stepper-item ${status}">
+    <button class="stepper-item ${status}" type="button" data-action="go-step" data-step="${index}">
       <span class="stepper-dot">${mark}</span>
-      <span>${label}</span>
-    </div>
+      <span class="stepper-label">${label}</span>
+    </button>
   `;
 }
 
@@ -569,8 +592,8 @@ function renderConnectionStep() {
       </div>
       ${state.porting ? renderPortingBlock() : ""}
     </div>
-    <div class="step-actions step-actions-end">
-      <button class="btn btn-primary" type="button" data-action="next-step">Далее</button>
+    <div class="step-actions step-actions-start">
+      <button class="btn btn-primary action-btn" type="button" data-action="next-step">Далее</button>
     </div>
   `;
 }
@@ -642,8 +665,7 @@ function renderBuyerStep() {
       ${selected ? renderCompanyData(selected) : ""}
     </div>
     ${selected && selected.type === "ip" ? renderIdentityBlock() : ""}
-    <div class="step-actions">
-      <button class="btn btn-ghost action-btn" type="button" data-action="prev-step">Назад</button>
+    <div class="step-actions step-actions-start">
       <button class="btn btn-primary action-btn" type="button" data-action="next-step" ${canGoFromBuyer() ? "" : "disabled"}>Далее</button>
     </div>
   `;
@@ -695,7 +717,7 @@ function renderIdentityBlock() {
           </div>
         </div>
       ` : `
-        <div class="grid grid-2">
+        <div class="identity-stack">
           <div class="company-card">
             <strong>Ввести вручную</strong>
             <label class="field-group"><span class="field-label">Серия и номер паспорта</span><input class="input" placeholder="0000 000000"></label>
@@ -704,7 +726,7 @@ function renderIdentityBlock() {
             <button class="btn btn-secondary btn-full" type="button" data-action="confirm-manual-id">Подтвердить</button>
           </div>
           <div class="company-card">
-            <strong>Подтянуть через сервис</strong>
+            <strong>Подтвердить с помощью ID-сервиса</strong>
             <div class="service-grid">
               ${["Госуслуги", "Сбер ID", "Альфа ID", "T-ID"].map(name => `<button class="service-card" type="button" data-action="confirm-service-id">${name}</button>`).join("")}
             </div>
@@ -744,8 +766,7 @@ function renderDeliveryStep() {
         <div>Чтобы получить заказ, достаточно показать QR-код. Пришлем его после оплаты.</div>
       </div>
     </div>
-    <div class="step-actions">
-      <button class="btn btn-ghost action-btn" type="button" data-action="prev-step">Назад</button>
+    <div class="step-actions step-actions-start">
       <button class="btn btn-primary action-btn" type="button" data-action="next-step">Далее</button>
     </div>
   `;
@@ -792,7 +813,6 @@ function renderDeliveryFields() {
 }
 
 function renderPaymentStep() {
-  const canOrder = isValidEmail(state.email) && state.accepted;
   return `
     <h1>Счет и оплата</h1>
     <div class="form-section">
@@ -824,14 +844,7 @@ function renderPaymentStep() {
         ${icon("info")}
         <div>Для заключения договора достаточно оплатить счет — никаких бумаг. Оплачивай только от имени организации, указанной в заказе.</div>
       </div>
-      ${state.paymentPanel ? renderPaymentPanel() : ""}
-    </div>
-    <div class="step-actions payment-actions">
-      <button class="btn btn-ghost action-btn" type="button" data-action="prev-step">Назад</button>
-      <div class="order-action">
-        <button class="btn btn-primary action-btn" type="button" data-action="submit-order" ${canOrder ? "" : "disabled"}>Оформить заказ</button>
-        <div class="helper-text">Оформляя заказ, ты принимаешь условия оферты</div>
-      </div>
+      ${renderPaymentPanel()}
     </div>
   `;
 }
@@ -962,9 +975,17 @@ function renderModal() {
     sberSms: renderSberSmsModal
   }[state.modal];
 
+  const modalClass = [
+    "modal-card",
+    state.modal === "custom" ? "wide" : "",
+    state.modal === "ai" ? "ai-modal" : "",
+    state.modal === "ai" && state.ai.result ? "ai-result-modal" : "",
+    state.modal === "yotaId" ? "yota-id-modal" : ""
+  ].filter(Boolean).join(" ");
+
   modalRoot.innerHTML = `
     <div class="modal-layer" role="presentation">
-      <section class="modal-card ${state.modal === "custom" ? "wide" : state.modal === "ai" ? "ai-modal" : state.modal === "yotaId" ? "yota-id-modal" : ""}" role="dialog" aria-modal="true">
+      <section class="${modalClass}" role="dialog" aria-modal="true">
         <button class="modal-close" type="button" data-action="close-modal" aria-label="Закрыть">×</button>
         ${content ? content() : ""}
       </section>
@@ -1062,10 +1083,8 @@ function renderAiModal() {
 
   if (state.ai.result) {
     const grow = tariffs[1];
-    const tasks = state.ai.answers.tasks.join(", ");
     return `
       <h2>Вот что подойдет твоей команде</h2>
-      <p class="section-copy">Для команды из ${state.ai.answers.team || "2-5 человек"} в сфере ${state.ai.answers.business || "IT и разработка"} с задачами ${tasks || "командной работы"} — рекомендуем Business Grow. Хватит минут, ГБ и 600 токенов для ежедневной работы с AI.</p>
       <div class="recommend-card">
         <span class="badge badge-soft">Рекомендация AI</span>
         <h3>${grow.name}</h3>
@@ -1187,6 +1206,11 @@ document.addEventListener("click", (event) => {
     render();
   }
 
+  if (action === "set-use-case") {
+    state.activeUseCase = Number(target.dataset.index) || 0;
+    render();
+  }
+
   if (action === "close-modal") {
     state.modal = null;
     renderModal();
@@ -1284,6 +1308,12 @@ document.addEventListener("click", (event) => {
     nextStep();
   }
 
+  if (action === "go-step") {
+    state.checkoutStep = Number(target.dataset.step) || 0;
+    state.paymentPanel = null;
+    render();
+  }
+
   if (action === "prev-step") {
     prevStep();
   }
@@ -1315,17 +1345,6 @@ document.addEventListener("click", (event) => {
 
   if (action === "set-payment") {
     state.payment = target.dataset.value;
-    state.paymentPanel = null;
-    render();
-  }
-
-  if (action === "submit-order") {
-    state.emailTouched = true;
-    if (!isValidEmail(state.email) || !state.accepted) {
-      render();
-      return;
-    }
-    state.paymentPanel = state.payment;
     render();
   }
 
@@ -1469,9 +1488,6 @@ function updateSuggestions(input) {
 }
 
 function updatePaymentButton() {
-  const button = document.querySelector('[data-action="submit-order"]');
-  if (!button) return;
-  button.disabled = !(isValidEmail(state.email) && state.accepted);
   const input = document.querySelector("[data-email]");
   if (input) input.classList.toggle("error", state.emailTouched && !isValidEmail(state.email));
 }
