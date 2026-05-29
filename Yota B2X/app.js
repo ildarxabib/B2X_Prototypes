@@ -262,7 +262,7 @@ function getCustomTariff() {
     gb: state.custom.gb,
     tokens: state.custom.tokens,
     price: customPrice(),
-    tooltip: "Токены можно потратить на тексты, звонки и контент прямо в приложении Yota"
+    tooltip: "Токены помогают быстрее готовить тексты, разбирать звонки и запускать рабочие задачи"
   };
 }
 
@@ -346,7 +346,7 @@ function renderLanding() {
         <div class="tariff-note has-tooltip">
           ✦ Токены — AI-кредиты в твоем тарифе
           <span class="info-dot" tabindex="0">i</span>
-          <span class="tooltip">Используй токены для генерации текстов, анализа звонков и контента прямо в приложении Yota</span>
+          <span class="tooltip">Используй токены для текстов, анализа звонков и контента. Они ускоряют рутину команды и помогают быстрее двигать продажи, сервис и маркетинг.</span>
         </div>
       </div>
       <div class="grid grid-4">
@@ -394,7 +394,7 @@ function renderTokenTooltip(text) {
   return `
     <span class="token-tooltip-title">${title.replace(":", "")}</span>
     <span class="token-tooltip-list">
-      ${items.map(item => `<span class="token-tooltip-item">${item.replace(/^•\s*/, "")}</span>`).join("")}
+      ${items.map(item => `<span class="token-tooltip-item">${item.replace(/^•\s*/, "").replace(/^~\s*/, "")}</span>`).join("")}
     </span>
   `;
 }
@@ -674,7 +674,7 @@ function renderBuyerStep() {
 function renderCompanyData(company) {
   return `
     <div class="company-card">
-      <span class="badge badge-soft">Данные подтверждены ✓</span>
+      ${company.type === "ip" ? "" : `<span class="badge badge-soft">Данные подтверждены ✓</span>`}
       <div class="data-grid">
         ${dataItem("Полное наименование", company.title)}
         ${dataItem("ИНН", company.inn)}
@@ -908,8 +908,11 @@ function renderCart() {
         </div>
         <div class="summary-line"><span>За номера</span><strong>${money(t.price * state.sims)}</strong></div>
       </div>
-      <div class="summary-block">
-        <strong>Усиливай свой тариф!</strong>
+      <div class="summary-block addon-block">
+        <div class="addon-heading">
+          <span>✦</span>
+          <strong>Усиливай свой тариф!</strong>
+        </div>
         ${addonCheckbox("agent", "Умный агент для обработки звонков", "Не теряй клиентов")}
         ${addonCheckbox("cyber", "Киберзащитник от DDoS-атак", "Будь спокоен")}
         ${addonCheckbox("target", "AI-таргет для бизнеса", "Продвигай!")}
@@ -923,13 +926,20 @@ function renderCart() {
 }
 
 function addonCheckbox(key, title, copy) {
+  const descriptions = {
+    agent: "Разбирает звонки, делает краткие итоги и напоминает о договоренностях. Помогает быстрее отвечать клиентам и не терять заявки.",
+    cyber: "Фильтрует угрозы и снижает риск сбоев от атак. Команда остается на связи, а бизнес-процессы не тормозят.",
+    target: "Помогает точнее продвигать продукты по данным аудитории. Маркетинг быстрее находит нужных клиентов."
+  };
+
   return `
-    <label class="checkbox-row">
+    <label class="checkbox-row addon-row has-tooltip">
       <input type="checkbox" data-addon="${key}" ${state.addons[key] ? "checked" : ""}>
       <span>
         <strong>${title}</strong>
         <span>${copy} · +${money(addonPrices[key])}/мес</span>
       </span>
+      <span class="tooltip addon-tooltip">${descriptions[key]}</span>
     </label>
   `;
 }
