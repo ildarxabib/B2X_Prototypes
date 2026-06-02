@@ -298,14 +298,12 @@
     state.route = getRoute()
     let html = ''
 
-    if (state.route === '/' || state.route === '') {
-      html = catalogPage()
-    } else if (state.route === '/picocells') {
+    if (state.route === '/' || state.route === '' || state.route === '/picocells') {
       html = landingPage()
     } else if (state.route === '/checkout/picocells') {
       html = checkoutPage()
     } else {
-      html = catalogPage()
+      html = landingPage()
     }
 
     app.innerHTML = html
@@ -342,33 +340,6 @@
         }
       }
     })
-  }
-
-  function catalogPage() {
-    return `
-      <div class="page">
-        ${topbar()}
-        <main class="container section">
-          <section class="card" style="padding: 40px;">
-            <h1 style="max-width: 760px; margin: 0; font-size: 48px; line-height: 1.05;">Цифровое подключение B2B-сервисов МегаФон</h1>
-            <p style="max-width: 640px; margin: 16px 0 0; color: var(--megafon-text-secondary); font-size: 17px; line-height: 1.5;">Выберите продукт, подтвердите данные и оформите заказ в едином checkout pipeline.</p>
-          </section>
-          <section class="grid grid--3 mt-10">
-            <article class="card card--interactive tariff-card" data-action="route" data-route="/picocells">
-              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
-                <div class="icon-box">${icon('Signal')}</div>
-                <span class="badge badge--brand">MVP</span>
-              </div>
-              <h2 style="margin:20px 0 0;font-size:22px;">${product.name}</h2>
-              <p style="margin:8px 0 0;color:var(--megafon-text-secondary);font-size:14px;line-height:1.5;">${product.catalogCard.description}</p>
-              <div class="tariff-card__cta">
-                <button class="btn btn--primary btn--full" data-action="route" data-route="/picocells">Открыть продукт</button>
-              </div>
-            </article>
-          </section>
-        </main>
-      </div>
-    `
   }
 
   function landingPage() {
@@ -1036,7 +1007,7 @@
           </button>
         </div>
         <div class="success-actions">
-          <button class="btn btn--secondary btn--full" data-action="route" data-route="/">На главную</button>
+          <button class="btn btn--secondary btn--full" data-action="route" data-route="/picocells">На главную</button>
           <a class="btn btn--secondary btn--full" href="https://b2b.megafon.ru" target="_blank">Перейти в МегаФон ID ${icon('ArrowRight', 'icon', 16)}</a>
         </div>
       </div>
@@ -1442,7 +1413,7 @@
   if (getRoute().startsWith('/checkout/')) {
     routeTo('/picocells')
   } else if (!window.location.hash) {
-    window.location.hash = '/'
+    window.location.hash = '/picocells'
   } else {
     render()
   }
