@@ -1168,56 +1168,6 @@ a {
   animation: fadeInUp 0.35s ease both;
 }
 
-.delivery-date-section {
-  display: grid;
-  gap: 12px;
-}
-
-.section-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--megafon-text);
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.date-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.slot-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.date-btn,
-.slot-btn {
-  border: 1px solid var(--megafon-border);
-  border-radius: 14px;
-  background: white;
-  padding: 12px;
-  color: var(--megafon-text);
-  font-size: 13px;
-  font-weight: 600;
-  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
-}
-
-.date-btn:hover,
-.slot-btn:hover {
-  border-color: var(--megafon-green);
-}
-
-.date-btn--active,
-.slot-btn--active {
-  border-color: var(--megafon-green);
-  background: var(--megafon-green);
-  color: white;
-}
-
 .pickup-list {
   display: grid;
   gap: 12px;
@@ -1443,7 +1393,6 @@ a {
   }
 
   .dense-grid,
-  .date-grid,
   .receiver-grid,
   .success-actions {
     grid-template-columns: 1fr;

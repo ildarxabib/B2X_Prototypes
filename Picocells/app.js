@@ -120,8 +120,6 @@
     { id: 'ligovsky', address: 'Санкт-Петербург, Лиговский проспект, 43', hours: 'Пн-Сб, 09:00-20:00' },
   ]
 
-  const timeSlots = ['10:00-14:00', '14:00-18:00', '18:00-22:00']
-
   const icons = {
     ArrowDown: '<path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>',
     ArrowRight: '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
@@ -200,8 +198,6 @@
       installFloor: '',
       installOffice: '',
       deliveryAddress: '',
-      selectedDate: '',
-      selectedSlot: '',
       pickupPoint: '',
       sameReceiver: true,
       receiver: {
@@ -222,6 +218,12 @@
   }
 
   function routeTo(route) {
+    if (route === '/' || route === '/picocells') {
+      window.history.pushState(null, '', window.location.pathname + window.location.search)
+      render()
+      return
+    }
+
     window.location.hash = route
     window.setTimeout(render, 0)
   }
@@ -880,11 +882,6 @@
         <div class="delivery-pane">
           ${field('delivery-address', 'Адрес доставки *', state.checkout.deliveryAddress, 'Санкт-Петербург, Невский проспект, 90', 'MapPin')}
           <div class="alert alert--warning">${icon('AlertTriangle')}<div class="alert__body">${product.step2.courierNote}</div></div>
-          <div class="delivery-date-section">
-            <div class="section-label">${icon('CalendarDays', 'icon', 16)} Желаемая дата доставки</div>
-            <div class="date-grid">${buildDates().map((date) => `<button class="date-btn ${state.checkout.selectedDate === date.id ? 'date-btn--active' : ''}" data-action="select-date" data-date="${date.id}">${date.label}</button>`).join('')}</div>
-            <div class="slot-list">${timeSlots.map((slot) => `<button class="slot-btn ${state.checkout.selectedSlot === slot ? 'slot-btn--active' : ''}" data-action="select-slot" data-slot="${slot}">${slot}</button>`).join('')}</div>
-          </div>
           ${receiverBlock('Данные получателя')}
         </div>
       `
@@ -965,7 +962,7 @@
       (state.checkout.receiver.firstName.trim() && state.checkout.receiver.lastName.trim() && state.checkout.receiver.phone.trim())
     if (!state.checkout.installAddress.trim()) return false
     if (!state.checkout.deliveryMethod) return false
-    if (state.checkout.deliveryMethod === 'courier') return state.checkout.deliveryAddress.trim() && state.checkout.selectedDate && state.checkout.selectedSlot && receiverReady
+    if (state.checkout.deliveryMethod === 'courier') return state.checkout.deliveryAddress.trim() && receiverReady
     return state.checkout.deliveryMethod === 'pickup' && state.checkout.pickupPoint && receiverReady
   }
 
@@ -1012,23 +1009,6 @@
         </div>
       </div>
     `
-  }
-
-  function buildDates() {
-    const formatter = new Intl.DateTimeFormat('ru-RU', {
-      weekday: 'short',
-      day: 'numeric',
-      month: 'long',
-    })
-    return Array.from({ length: 5 }, (_, index) => {
-      const date = new Date()
-      date.setDate(date.getDate() + index + 1)
-      const label = formatter.format(date).replace('.', '')
-      return {
-        id: date.toISOString().slice(0, 10),
-        label: label.charAt(0).toUpperCase() + label.slice(1),
-      }
-    })
   }
 
   function completeStep(step, nextStep) {
@@ -1226,16 +1206,6 @@
       updateDeliverySection()
     }
 
-    if (action === 'select-date') {
-      state.checkout.selectedDate = target.dataset.date
-      updateDeliverySection()
-    }
-
-    if (action === 'select-slot') {
-      state.checkout.selectedSlot = target.dataset.slot
-      updateDeliverySection()
-    }
-
     if (action === 'select-pickup') {
       state.checkout.pickupPoint = target.dataset.pickup
       updateDeliverySection()
@@ -1409,11 +1379,10 @@
   }
 
   window.addEventListener('hashchange', render)
+  window.addEventListener('popstate', render)
 
   if (getRoute().startsWith('/checkout/')) {
     routeTo('/picocells')
-  } else if (!window.location.hash) {
-    window.location.hash = '/picocells'
   } else {
     render()
   }
