@@ -377,6 +377,10 @@
                   .map((tag) => `<span class="hero__tag">${tag}</span>`)
                   .join('')}
               </div>
+              <div class="hero__actions">
+                <button class="btn btn--primary" data-action="connect" data-tariff="extended">Подключить</button>
+                <button class="btn btn--secondary" data-action="open-lead">Оставить заявку</button>
+              </div>
             </div>
             <div class="hero__media" aria-hidden="true">
               <img class="hero__image" src="./assets/picocell-router.png" alt="" loading="eager">

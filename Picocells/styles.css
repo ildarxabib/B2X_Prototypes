@@ -18,6 +18,11 @@
   --megafon-error: #ff4d4f;
   --megafon-warning: #ff9f0a;
   --megafon-info: #00b5ff;
+  --hero-gradient-1: #f5f1f8;
+  --hero-gradient-2: #eae6ef;
+  --hero-gradient-3: #e3dee9;
+  --hero-gradient-4: #d9d4e0;
+  --hero-gradient-5: #d1cbd9;
   --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.07);
   --shadow-card-hover: 0 8px 28px rgba(0, 0, 0, 0.12);
   --shadow-button: 0 4px 16px rgba(0, 185, 86, 0.3);
@@ -235,7 +240,14 @@ a {
 }
 
 .hero {
-  background: var(--megafon-green);
+  background: linear-gradient(
+    90deg,
+    var(--hero-gradient-1) 0%,
+    var(--hero-gradient-2) 28%,
+    var(--hero-gradient-3) 52%,
+    var(--hero-gradient-4) 76%,
+    var(--hero-gradient-5) 100%
+  );
 }
 
 .hero__inner {
@@ -256,7 +268,7 @@ a {
 .hero h1 {
   max-width: 700px;
   margin: 0;
-  color: white;
+  color: var(--megafon-text);
   font-size: 40px;
   font-weight: 700;
   line-height: 1.08;
@@ -264,7 +276,7 @@ a {
 
 .hero p {
   margin: 14px 0 0;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(43, 45, 51, 0.76);
   font-size: 17px;
 }
 
@@ -276,13 +288,25 @@ a {
 }
 
 .hero__tag {
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.64);
   border-radius: 999px;
   padding: 7px 12px;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  background: rgba(255, 255, 255, 0.42);
+  color: var(--megafon-text);
   font-size: 13px;
   font-weight: 500;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.hero__actions .btn {
+  min-width: 160px;
 }
 
 .hero__media {
@@ -1415,6 +1439,15 @@ a {
 
   .hero__media {
     display: none;
+  }
+
+  .hero__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .hero__actions .btn {
+    width: 100%;
   }
 
   .hero h1 {
