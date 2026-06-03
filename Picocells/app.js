@@ -378,6 +378,9 @@
                   .join('')}
               </div>
             </div>
+            <div class="hero__media" aria-hidden="true">
+              <img class="hero__image" src="./assets/picocell-router.png" alt="" loading="eager">
+            </div>
           </div>
         </section>
 
